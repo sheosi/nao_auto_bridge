@@ -1,12 +1,13 @@
 #include <boost/variant.hpp>
 #include <ros/ros.h>
-
-// Some forward definitions
-namespace naoqi_msgs {
-    namespace GetInstalledBehaviors {
-        class Response;
-    }
-}
+#include <actionlib/server/simple_action_server.h>
+#include <humanoid_nav_msgs/ClipFootstep.h>
+#include <humanoid_nav_msgs/StepTarget.h>
+#include <humanoid_nav_msgs/StepTargetService.h>
+#include <naoqi_bridge_msgs/GetInstalledBehaviors.h>
+#include <naoqi_bridge_msgs/FadeRGB.h>
+#include <naoqi_bridge_msgs/RunBehaviorAction.h>
+#include <naoqi_bridge_msgs/BlinkAction.h>
 
 // Base classes
 class NetworkNao {
@@ -29,21 +30,19 @@ public:
     void OnSolitary();
 
     // Behaviors methods
-    void OnRunBehavior(ros::SimpleActionServer &srv);
-    void OnGetInstalledBehaviors(naoqi_msgs::GetInstalledBehaviors::Response &resp);
+    void OnRunBehavior(actionlib::SimpleActionServer<naoqi_bridge_msgs::RunBehaviorAction> &srv);
+    void OnGetInstalledBehaviors(naoqi_bridge_msgs::GetInstalledBehaviors::Response &resp);
 
     // Diagnostic methods
     // No methods
 
     // Footsteps methods
-    void OnFootstep(const humanoid_nav_msgs::StepTarget::ConstPtr& msg);
-    humanoid_nav_msgs::StepTarget OnClipFootstep(const humanoid_nav_msgs::StepTarget::ConstPtr& in);
+    void OnFootstep(const humanoid_nav_msgs::StepTarget& msg);
+    humanoid_nav_msgs::StepTarget OnClipFootstep(const humanoid_nav_msgs::StepTarget& in);
 
     // Leds methods
-    void OnBlink(ros::SimpleActionServer &srv);
-    humanoid_nav_msgs::StepTarget OnClipFootstep(
-        const humanoid_nav_msgs::StepTarget::ConstPtr& in
-    );
+    void OnBlink(actionlib::SimpleActionServer<naoqi_bridge_msgs::BlinkAction> &srv);
+    void OnFadeRgb(const naoqi_bridge_msgs::FadeRGBConstPtr &msg);
 
     // Speech methods
     void OnSpeechActionGoal();
@@ -100,3 +99,9 @@ namespace BridgeNaoWalker {
 }
 
 extern boost::variant <NetworkNao,SimulatedNao> nao_connection;
+
+template <typename T, typename... Ts>
+bool holds_alternative(const boost::variant<Ts...>& v) noexcept
+{
+    return boost::get<T>(&v) != nullptr;
+}
