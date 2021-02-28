@@ -18,7 +18,7 @@ namespace BridgeNaoLeds {
     void on_blink(
         const naoqi_bridge_msgs::BlinkGoalConstPtr &goal
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnBlink();
+        nao_connection.OnBlink();
         naoqi_bridge_msgs::BlinkResult res;
         act_srv_blink->setSucceeded(res);
     }
@@ -26,7 +26,7 @@ namespace BridgeNaoLeds {
     void on_fade_rgb(
         const naoqi_bridge_msgs::FadeRGBConstPtr &msg
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnFadeRgb(msg);
+        nao_connection.OnFadeRgb(msg);
     }
 
     void init(ros::NodeHandle &n) {

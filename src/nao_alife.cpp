@@ -35,7 +35,7 @@ namespace BridgeNaoAlife {
         std_srvs::Empty::Response &resp
     ) {
 
-        boost::get<SimulatedNao>(nao_connection).OnDisabled();
+        nao_connection.OnDisabled();
         return true;
     }
 
@@ -44,7 +44,7 @@ namespace BridgeNaoAlife {
             std_srvs::Empty::Response &resp
     ) {
 
-        boost::get<SimulatedNao>(nao_connection).OnInteractive();
+        nao_connection.OnInteractive();
         return true;
     }
 
@@ -53,7 +53,7 @@ namespace BridgeNaoAlife {
                 std_srvs::Empty::Response &resp
     ) {
 
-        boost::get<SimulatedNao>(nao_connection).OnSafeguard();
+        nao_connection.OnSafeguard();
         return true;
     }
 
@@ -62,17 +62,16 @@ namespace BridgeNaoAlife {
                 std_srvs::Empty::Response &resp
     ) {
 
-        boost::get<SimulatedNao>(nao_connection).OnSolitary();
+        nao_connection.OnSolitary();
         return true;
     }
 
     void init(ros::NodeHandle &n) {
-        if (holds_alternative<NetworkNao>(nao_connection)) {
-            srv_disabled = n.advertiseService("nao_alife/disabled", BridgeNaoAlife::on_disabled);
-            srv_interactive = n.advertiseService("nao_alife/interactive", BridgeNaoAlife::on_interactive);
-            srv_safeguard =  n.advertiseService("nao_alife/safeguard", BridgeNaoAlife::on_safeguard);
-            srv_solitary =  n.advertiseService("nao_alife/solitary", BridgeNaoAlife::on_solitary);
-        }
+        srv_disabled = n.advertiseService("nao_alife/disabled", BridgeNaoAlife::on_disabled);
+        srv_interactive = n.advertiseService("nao_alife/interactive", BridgeNaoAlife::on_interactive);
+        srv_safeguard =  n.advertiseService("nao_alife/safeguard", BridgeNaoAlife::on_safeguard);
+        srv_solitary =  n.advertiseService("nao_alife/solitary", BridgeNaoAlife::on_solitary);
+        
     }
 }
 

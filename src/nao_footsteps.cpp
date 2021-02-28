@@ -21,14 +21,14 @@ namespace BridgeNaoFootsteps {
                        srv_clip_footstep;
 
     void on_footstep(const humanoid_nav_msgs::StepTarget::ConstPtr& msg) {
-        boost::get<SimulatedNao>(nao_connection).OnFootstep(*msg);
+        nao_connection.OnFootstep(*msg);
     }
 
     bool on_footstep_srv(
         humanoid_nav_msgs::StepTargetService::Request &req,
         humanoid_nav_msgs::StepTargetService::Response &resp
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnFootstep(req.step);
+        nao_connection.OnFootstep(req.step);
         
         return true;
     }
@@ -37,8 +37,7 @@ namespace BridgeNaoFootsteps {
         humanoid_nav_msgs::ClipFootstep::Request &req,
         humanoid_nav_msgs::ClipFootstep::Response &resp
     ) {
-        const auto res = boost::get<SimulatedNao>(nao_connection).OnClipFootstep(req.step);
-        resp.step = res;
+        resp.step = nao_connection.OnClipFootstep(req.step);
         return true;
     }
 

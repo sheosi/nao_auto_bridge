@@ -20,7 +20,7 @@ namespace BridgeNaoBehaviors {
     void on_run_behavior(
             const naoqi_bridge_msgs::RunBehaviorGoalConstPtr &goal
         ) {
-        boost::get<SimulatedNao>(nao_connection).OnRunBehavior();
+        nao_connection.OnRunBehavior();
         naoqi_bridge_msgs::RunBehaviorResult result;
         act_srv_run_behavior->setSucceeded(result);
     }
@@ -29,7 +29,7 @@ namespace BridgeNaoBehaviors {
         naoqi_bridge_msgs::GetInstalledBehaviors::Request &req,
         naoqi_bridge_msgs::GetInstalledBehaviors::Response &resp
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnGetInstalledBehaviors(resp);
+        nao_connection.OnGetInstalledBehaviors(resp);
         return true;
     }
 

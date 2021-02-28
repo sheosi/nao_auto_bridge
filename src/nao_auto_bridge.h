@@ -1,4 +1,3 @@
-#include <boost/variant.hpp>
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 #include <geometry_msgs/Pose2D.h>
@@ -12,18 +11,6 @@
 #include <naoqi_bridge_msgs/BlinkAction.h>
 
 using std::string;
-
-// Base classes
-class NetworkNao {
-private:
-    ros::NodeHandle n;
-
-public:
-    NetworkNao() {}
-
-    // No Alife methods
-
-};
 
 class SimulatedNao {
 public:
@@ -112,10 +99,4 @@ namespace BridgeNaoWalker {
     void init(ros::NodeHandle &n);
 }
 
-extern boost::variant <NetworkNao,SimulatedNao> nao_connection;
-
-template <typename T, typename... Ts>
-bool holds_alternative(const boost::variant<Ts...>& v) noexcept
-{
-    return boost::get<T>(&v) != nullptr;
-}
+extern SimulatedNao nao_connection;

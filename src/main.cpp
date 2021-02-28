@@ -1,7 +1,7 @@
 #include "nao_auto_bridge.h"
 #include <ros/ros.h>
 
-boost::variant <NetworkNao,SimulatedNao> nao_connection = SimulatedNao();
+SimulatedNao nao_connection = SimulatedNao();
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "nao_auto_bridge");

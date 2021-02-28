@@ -93,19 +93,19 @@ namespace BridgeNaoWalker {
     void on_cmd_vel(
         const geometry_msgs::Twist &msg
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnCmdVel(msg);
+        nao_connection.OnCmdVel(msg);
     }
 
     void on_cmd_pose(
         const geometry_msgs::Pose2D &msg
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnCmdPose(msg);
+        nao_connection.OnCmdPose(msg);
     }
 
     void on_cmd_step(
         const humanoid_nav_msgs::StepTarget &msg
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnCmdStep(msg);
+        nao_connection.OnCmdStep(msg);
     }
 
     // Services
@@ -113,7 +113,7 @@ namespace BridgeNaoWalker {
         std_srvs::Empty::Request &req,
         std_srvs::Empty::Response &resp
     ) {
-         boost::get<SimulatedNao>(nao_connection).OnReadFootGaitConfigSrv();
+         nao_connection.OnReadFootGaitConfigSrv();
          return true;
     }
 
@@ -121,7 +121,7 @@ namespace BridgeNaoWalker {
         naoqi_bridge_msgs::CmdVelService::Request &req,
         naoqi_bridge_msgs::CmdVelService::Response &resp
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnCmdVelSrv(req.twist);
+        nao_connection.OnCmdVelSrv(req.twist);
         return true;
     }
 
@@ -129,7 +129,7 @@ namespace BridgeNaoWalker {
         humanoid_nav_msgs::StepTargetService::Request &req,
         humanoid_nav_msgs::StepTargetService::Response &resp
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnCmdStepSrv(req.step);
+        nao_connection.OnCmdStepSrv(req.step);
         return true;
     }
 
@@ -137,7 +137,7 @@ namespace BridgeNaoWalker {
         naoqi_bridge_msgs::CmdPoseService::Request &req,
         naoqi_bridge_msgs::CmdPoseService::Response &resp
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnCmdPoseSrv(req.pose);
+        nao_connection.OnCmdPoseSrv(req.pose);
         return true;
     }
 
@@ -145,7 +145,7 @@ namespace BridgeNaoWalker {
         std_srvs::Empty::Request &req,
         std_srvs::Empty::Response &resp
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnStopWalkSrv();
+        nao_connection.OnStopWalkSrv();
         return true;
     }
 
@@ -153,7 +153,7 @@ namespace BridgeNaoWalker {
         std_srvs::Empty::Request &req,
         std_srvs::Empty::Response &resp
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnNeedsStartWalkPoseSrv();
+        nao_connection.OnNeedsStartWalkPoseSrv();
         return true;
     }
 
@@ -161,7 +161,7 @@ namespace BridgeNaoWalker {
         naoqi_bridge_msgs::SetArmsEnabled::Request &req,
         naoqi_bridge_msgs::SetArmsEnabled::Response &resp
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnEnableArmWalkingSrv(req.left_arm, req.right_arm);
+        nao_connection.OnEnableArmWalkingSrv(req.left_arm, req.right_arm);
         return true;
     }
 

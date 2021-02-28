@@ -70,7 +70,7 @@ namespace BridgeNaoSpeech {
     void on_speech_action_goal(
         const naoqi_bridge_msgs::SpeechWithFeedbackGoalConstPtr &goal
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnSpeechActionGoal(goal->say);
+        nao_connection.OnSpeechActionGoal(goal->say);
         naoqi_bridge_msgs::SpeechWithFeedbackResult result;
         act_srv_speech_action_goal->setSucceeded(result);
     }
@@ -78,7 +78,7 @@ namespace BridgeNaoSpeech {
     void on_speech_vocabulary_action(
         const naoqi_bridge_msgs::SetSpeechVocabularyGoalConstPtr &goal
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnSpeechVocabularyAction(goal->words);
+        nao_connection.OnSpeechVocabularyAction(goal->words);
         naoqi_bridge_msgs::SetSpeechVocabularyResult result;
         act_srv_speech_vocabulary_action->setSucceeded(result);
     }
@@ -86,14 +86,14 @@ namespace BridgeNaoSpeech {
     void on_speech(
         const std_msgs::StringConstPtr &msg
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnSpeech(msg->data);
+        nao_connection.OnSpeech(msg->data);
     }
 
     bool on_reconfigure(
         std_srvs::Empty::Request &req,
         std_srvs::Empty::Response &resp
     ){
-        boost::get<SimulatedNao>(nao_connection).OnReconfigure();
+        nao_connection.OnReconfigure();
         return true;
     }
 
@@ -101,7 +101,7 @@ namespace BridgeNaoSpeech {
         std_srvs::Empty::Request &req,
         std_srvs::Empty::Response &resp
     ){
-        boost::get<SimulatedNao>(nao_connection).OnStartRecognition();
+        nao_connection.OnStartRecognition();
         return true;
     }
 
@@ -109,7 +109,7 @@ namespace BridgeNaoSpeech {
         std_srvs::Empty::Request &req,
         std_srvs::Empty::Response &resp
     ){
-        boost::get<SimulatedNao>(nao_connection).OnStopRecognition();
+        nao_connection.OnStopRecognition();
         return true;
     }
 
