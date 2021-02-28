@@ -1,4 +1,5 @@
 #include "nao_auto_bridge.h"
+
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Pose2D.h>
@@ -11,45 +12,67 @@
 
 
 // Subscribers
-void SimulatedNao::OnCmdVel() {
+void SimulatedNao::OnCmdVel(const geometry_msgs::Twist &msg) {
     //Note: We could replicate behaviour
+    ROS_INFO("Received cmd_vel command \"linear{x: %f, y: %f, z: %f}, angular{x: %f, y: %f, z: %f}\"",msg.linear.x,msg.linear.y,msg.linear.z,msg.angular.x, msg.angular.y, msg.angular.z);
 }
 
-void SimulatedNao::OnCmdPose() {
+void SimulatedNao::OnCmdPose(const geometry_msgs::Pose2D &msg) {
     //Note: We could replicate behaviour
+    ROS_INFO("Received cmd_pose command \"x: %f, y: %f, theta: %f\"", msg.x, msg.y, msg.theta);
 }
 
-void SimulatedNao::OnCmdStep() {
+void SimulatedNao::OnCmdStep(const humanoid_nav_msgs::StepTarget &msg) {
     //Note: We could replicate behaviour
+    ROS_INFO("Received cmd_step command \"pose{x: %f, y: %f, theta:%f}, leg:%u\"", msg.pose.x, msg.pose.y, msg.pose.theta, msg.leg);
 }
 
 // Services
 void SimulatedNao::OnReadFootGaitConfigSrv() {
     //Note: We could replicate behaviour
+    ROS_INFO("Asked to read ~use_foot_gait_config ~foot_gait_config");
 }
 
-void SimulatedNao::OnCmdVelSrv() {
+void SimulatedNao::OnCmdVelSrv(const geometry_msgs::Twist &msg) {
     //Note: We could replicate behaviour
+    this->OnCmdVel(msg);
 }
 
-void SimulatedNao::OnCmdStepSrv() {
+void SimulatedNao::OnCmdStepSrv(const humanoid_nav_msgs::StepTarget &msg) {
     //Note: We could replicate behaviour
+    this->OnCmdStep(msg);
 }
 
-void SimulatedNao::OnCmdPoseSrv() {
+void SimulatedNao::OnCmdPoseSrv(const geometry_msgs::Pose2D &msg) {
     //Note: We could replicate behaviour
+    this->OnCmdPose(msg);
 }
 
 void SimulatedNao::OnStopWalkSrv() {
     //Note: We could replicate behaviour
+    ROS_INFO("Asked to stop walking");
 }
 
 void SimulatedNao::OnNeedsStartWalkPoseSrv() {
     //Note: We could replicate behaviour
+    ROS_INFO("Asked to make sure to have a suitable pose before walking");
 }
 
-void SimulatedNao::OnEnableArmWalkingSrv() {
+void SimulatedNao::OnEnableArmWalkingSrv(bool left, bool right) {
     //Note: We could replicate behaviour
+    if (left) {
+        ROS_INFO("Left arm movement during walk enabled");    
+    }
+    else {
+        ROS_INFO("Left arm movement during walk disabled");
+    }
+
+    if (right) {
+        ROS_INFO("Right arm movement during walk enabled");
+    }
+    else {
+        ROS_INFO("Right arm movement during walk disabled");
+    }
 }
 
 
@@ -68,21 +91,21 @@ namespace BridgeNaoWalker {
 
         // Subscriptions
     void on_cmd_vel(
-        const geometry_msgs::TwistConstPtr &msg
+        const geometry_msgs::Twist &msg
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnCmdVel();
+        boost::get<SimulatedNao>(nao_connection).OnCmdVel(msg);
     }
 
     void on_cmd_pose(
-        const geometry_msgs::Pose2DConstPtr &msg
+        const geometry_msgs::Pose2D &msg
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnCmdPose();
+        boost::get<SimulatedNao>(nao_connection).OnCmdPose(msg);
     }
 
     void on_cmd_step(
         const humanoid_nav_msgs::StepTarget &msg
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnCmdStep();
+        boost::get<SimulatedNao>(nao_connection).OnCmdStep(msg);
     }
 
     // Services
@@ -98,7 +121,7 @@ namespace BridgeNaoWalker {
         naoqi_bridge_msgs::CmdVelService::Request &req,
         naoqi_bridge_msgs::CmdVelService::Response &resp
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnCmdVelSrv();
+        boost::get<SimulatedNao>(nao_connection).OnCmdVelSrv(req.twist);
         return true;
     }
 
@@ -106,7 +129,7 @@ namespace BridgeNaoWalker {
         humanoid_nav_msgs::StepTargetService::Request &req,
         humanoid_nav_msgs::StepTargetService::Response &resp
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnCmdStepSrv();
+        boost::get<SimulatedNao>(nao_connection).OnCmdStepSrv(req.step);
         return true;
     }
 
@@ -114,7 +137,7 @@ namespace BridgeNaoWalker {
         naoqi_bridge_msgs::CmdPoseService::Request &req,
         naoqi_bridge_msgs::CmdPoseService::Response &resp
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnCmdPoseSrv();
+        boost::get<SimulatedNao>(nao_connection).OnCmdPoseSrv(req.pose);
         return true;
     }
 
@@ -138,7 +161,7 @@ namespace BridgeNaoWalker {
         naoqi_bridge_msgs::SetArmsEnabled::Request &req,
         naoqi_bridge_msgs::SetArmsEnabled::Response &resp
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnNeedsStartWalkPoseSrv();
+        boost::get<SimulatedNao>(nao_connection).OnEnableArmWalkingSrv(req.left_arm, req.right_arm);
         return true;
     }
 

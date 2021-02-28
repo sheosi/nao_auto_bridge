@@ -7,6 +7,7 @@
 
 void SimulatedNao::OnFootstep(const humanoid_nav_msgs::StepTarget& msg) {
     //Note: We could replicate behaviour
+    this->OnCmdStep(msg);
 }
 
 humanoid_nav_msgs::StepTarget SimulatedNao::OnClipFootstep(const humanoid_nav_msgs::StepTarget& in) {

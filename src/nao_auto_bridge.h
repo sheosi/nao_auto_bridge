@@ -1,6 +1,8 @@
 #include <boost/variant.hpp>
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
+#include <geometry_msgs/Pose2D.h>
+#include <geometry_msgs/Twist.h>
 #include <humanoid_nav_msgs/ClipFootstep.h>
 #include <humanoid_nav_msgs/StepTarget.h>
 #include <humanoid_nav_msgs/StepTargetService.h>
@@ -8,6 +10,8 @@
 #include <naoqi_bridge_msgs/FadeRGB.h>
 #include <naoqi_bridge_msgs/RunBehaviorAction.h>
 #include <naoqi_bridge_msgs/BlinkAction.h>
+
+using std::string;
 
 // Base classes
 class NetworkNao {
@@ -30,7 +34,7 @@ public:
     void OnSolitary();
 
     // Behaviors methods
-    void OnRunBehavior(actionlib::SimpleActionServer<naoqi_bridge_msgs::RunBehaviorAction> &srv);
+    void OnRunBehavior();
     void OnGetInstalledBehaviors(naoqi_bridge_msgs::GetInstalledBehaviors::Response &resp);
 
     // Diagnostic methods
@@ -41,28 +45,38 @@ public:
     humanoid_nav_msgs::StepTarget OnClipFootstep(const humanoid_nav_msgs::StepTarget& in);
 
     // Leds methods
-    void OnBlink(actionlib::SimpleActionServer<naoqi_bridge_msgs::BlinkAction> &srv);
+    void OnBlink();
     void OnFadeRgb(const naoqi_bridge_msgs::FadeRGBConstPtr &msg);
 
     // Speech methods
-    void OnSpeechActionGoal();
-    void OnSpeechVocabularyAction();
-    void OnSpeech();
+    void OnSpeechActionGoal(const string& text);
+    void OnSpeechVocabularyAction(const std::vector<string>& words);
+    void OnSpeech(const string& text);
     void OnReconfigure();
     void OnStartRecognition();
     void OnStopRecognition();
 
     // Walker methods
-    void OnCmdVel();
-    void OnCmdPose();
-    void OnCmdStep();
+    void OnCmdVel(const geometry_msgs::Twist &msg);
+    void OnCmdPose(const geometry_msgs::Pose2D &msg);
+    void OnCmdStep(const humanoid_nav_msgs::StepTarget &msg);
     void OnReadFootGaitConfigSrv();
-    void OnCmdVelSrv();
-    void OnCmdStepSrv();
-    void OnCmdPoseSrv();
+    void OnCmdVelSrv(const geometry_msgs::Twist &msg);
+    void OnCmdStepSrv(const humanoid_nav_msgs::StepTarget &msg);
+    void OnCmdPoseSrv(const geometry_msgs::Pose2D &msg);
     void OnStopWalkSrv();
     void OnNeedsStartWalkPoseSrv();
-    void OnEnableArmWalkingSrv();
+    void OnEnableArmWalkingSrv(bool left, bool right);
+
+private:
+    struct SpeechData {
+        bool recognition_started;
+        bool words_set;
+
+        SpeechData() : recognition_started(false), words_set(false){
+        }
+    };
+    SpeechData speech_data;
 };
 
 // Bridges

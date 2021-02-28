@@ -5,10 +5,8 @@
 #include <naoqi_bridge_msgs/GetInstalledBehaviors.h>
 
 
-void SimulatedNao::OnRunBehavior(actionlib::SimpleActionServer<naoqi_bridge_msgs::RunBehaviorAction> &srv) {
+void SimulatedNao::OnRunBehavior() {
     //Note: We could replicate behaviour
-    naoqi_bridge_msgs::RunBehaviorResult res;
-    srv.setSucceeded(res);
 }
 
 void SimulatedNao::OnGetInstalledBehaviors(naoqi_bridge_msgs::GetInstalledBehaviors::Response &resp) {
@@ -22,7 +20,9 @@ namespace BridgeNaoBehaviors {
     void on_run_behavior(
             const naoqi_bridge_msgs::RunBehaviorGoalConstPtr &goal
         ) {
-        boost::get<SimulatedNao>(nao_connection).OnRunBehavior(*act_srv_run_behavior);
+        boost::get<SimulatedNao>(nao_connection).OnRunBehavior();
+        naoqi_bridge_msgs::RunBehaviorResult result;
+        act_srv_run_behavior->setSucceeded(result);
     }
 
     bool on_get_installed_behaviors(

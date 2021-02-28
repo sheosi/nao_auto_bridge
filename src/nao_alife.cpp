@@ -2,25 +2,25 @@
 #include <ros/ros.h>
 #include <std_srvs/Empty.h>
 
-// Note: Some methods are only implemented for a simulated Nao
-
-// NetworkNao
-
 // SimulatedNao
 void  SimulatedNao::OnDisabled() {
     //Note: We could replicate behaviour
+    ROS_INFO("Set Nao autonomous behaviour as 'Disabled'");
 }
 
 void SimulatedNao::OnInteractive() {
     //Note: We could replicate behaviour
+    ROS_INFO("Set Nao autonomous behaviour as 'Interactive'");
 }
 
 void SimulatedNao::OnSafeguard() {
     //Note: We could replicate behaviour
+    ROS_INFO("Set Nao autonomous behaviour as 'SafeGuard'");
 }
 
 void SimulatedNao::OnSolitary() {
     //Note: We could replicate behaviour
+    ROS_INFO("Set Nao autonomous behaviour as 'Solitary'");
 }
 
 
@@ -68,10 +68,10 @@ namespace BridgeNaoAlife {
 
     void init(ros::NodeHandle &n) {
         if (holds_alternative<NetworkNao>(nao_connection)) {
-            srv_disabled = n.advertiseService("disabled", BridgeNaoAlife::on_disabled);
-            srv_interactive = n.advertiseService("interactive", BridgeNaoAlife::on_interactive);
-            srv_safeguard =  n.advertiseService("safeguard", BridgeNaoAlife::on_safeguard);
-            srv_solitary =  n.advertiseService("solitary", BridgeNaoAlife::on_solitary);
+            srv_disabled = n.advertiseService("nao_alife/disabled", BridgeNaoAlife::on_disabled);
+            srv_interactive = n.advertiseService("nao_alife/interactive", BridgeNaoAlife::on_interactive);
+            srv_safeguard =  n.advertiseService("nao_alife/safeguard", BridgeNaoAlife::on_safeguard);
+            srv_solitary =  n.advertiseService("nao_alife/solitary", BridgeNaoAlife::on_solitary);
         }
     }
 }

@@ -1,5 +1,9 @@
 #include "nao_auto_bridge.h"
+
+#include <boost/algorithm/string/join.hpp>
+#include <iostream>
 #include <vector>
+
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 #include <naoqi_bridge_msgs/SpeechWithFeedbackAction.h>
@@ -8,31 +12,50 @@
 #include <std_msgs/String.h>
 #include <std_srvs/Empty.h>
 
+using std::string;
 
-void SimulatedNao::OnSpeechActionGoal() {
+void SimulatedNao::OnSpeechActionGoal(const string& text) {
     //Note: We could replicate behaviour
+    ROS_INFO("Nao said: %s", text.c_str());
 }
 
-void SimulatedNao::OnSpeechVocabularyAction() {
+void SimulatedNao::OnSpeechVocabularyAction(const std::vector<string>& words) {
     //Note: We could replicate behaviour
+    const string joined = boost::algorithm::join(words, ",");
+    ROS_INFO("Words recognized set: %s", joined.c_str());
 }
 
-void SimulatedNao::OnSpeech() {
+void SimulatedNao::OnSpeech(const string& text) {
     //Note: We could replicate behaviour
+    ROS_INFO("Nao said: %s", text.c_str());
 }
 
 void SimulatedNao::OnReconfigure() {
     //Note: We could replicate behaviour
+    ROS_INFO("Speech reconfigured");
 }
 
 void SimulatedNao::OnStartRecognition() {
     //Note: We could replicate behaviour
+    if (!this->speech_data.recognition_started) {
+        ROS_INFO("Recognition started");
+        this->speech_data.recognition_started = true;
+    }
+    else {
+        ROS_INFO("Tried to start recognition, but it was already started by another node");
+    }
 }
 
 void SimulatedNao::OnStopRecognition() {
     //Note: We could replicate behaviour
+    if (this->speech_data.recognition_started) {
+        ROS_INFO("Recognition stopped");
+        this->speech_data.recognition_started = false;
+    }
+    else {
+        ROS_INFO("Tried top stop recognition, but it is already stopped");
+    }
 }
-
 
 
 namespace BridgeNaoSpeech {
@@ -47,19 +70,23 @@ namespace BridgeNaoSpeech {
     void on_speech_action_goal(
         const naoqi_bridge_msgs::SpeechWithFeedbackGoalConstPtr &goal
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnSpeechActionGoal();
+        boost::get<SimulatedNao>(nao_connection).OnSpeechActionGoal(goal->say);
+        naoqi_bridge_msgs::SpeechWithFeedbackResult result;
+        act_srv_speech_action_goal->setSucceeded(result);
     }
 
     void on_speech_vocabulary_action(
         const naoqi_bridge_msgs::SetSpeechVocabularyGoalConstPtr &goal
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnSpeechVocabularyAction();
+        boost::get<SimulatedNao>(nao_connection).OnSpeechVocabularyAction(goal->words);
+        naoqi_bridge_msgs::SetSpeechVocabularyResult result;
+        act_srv_speech_vocabulary_action->setSucceeded(result);
     }
 
     void on_speech(
         const std_msgs::StringConstPtr &msg
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnSpeech();
+        boost::get<SimulatedNao>(nao_connection).OnSpeech(msg->data);
     }
 
     bool on_reconfigure(
@@ -101,10 +128,11 @@ namespace BridgeNaoSpeech {
         n.param("word_spoting", word_spoting, false);
 
         act_srv_speech_action_goal = 
-        std::unique_ptr<actionlib::SimpleActionServer<naoqi_bridge_msgs::SpeechWithFeedbackAction>>(new actionlib::SimpleActionServer<naoqi_bridge_msgs::SpeechWithFeedbackAction>(n, "speech_action/goal", on_speech_action_goal, true));
+        std::unique_ptr<actionlib::SimpleActionServer<naoqi_bridge_msgs::SpeechWithFeedbackAction>>(
+            new actionlib::SimpleActionServer<naoqi_bridge_msgs::SpeechWithFeedbackAction>(n, "speech_action/goal", on_speech_action_goal, true));
         act_srv_speech_vocabulary_action = 
         std::unique_ptr<actionlib::SimpleActionServer<naoqi_bridge_msgs::SetSpeechVocabularyAction>>(
-        new actionlib::SimpleActionServer<naoqi_bridge_msgs::SetSpeechVocabularyAction>(n, "/speech_vocabulary_action/goal", on_speech_vocabulary_action, true));
+            new actionlib::SimpleActionServer<naoqi_bridge_msgs::SetSpeechVocabularyAction>(n, "/speech_vocabulary_action/goal", on_speech_vocabulary_action, true));
 
         sub_speech = n.subscribe("speech", 1000, on_speech);
 

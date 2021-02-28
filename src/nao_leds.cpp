@@ -4,10 +4,8 @@
 #include <naoqi_bridge_msgs/BlinkGoal.h>
 #include <naoqi_bridge_msgs/FadeRGB.h>
 
-void SimulatedNao::OnBlink(actionlib::SimpleActionServer<naoqi_bridge_msgs::BlinkAction> &srv) {
+void SimulatedNao::OnBlink() {
     //Note: We could replicate behaviour
-    naoqi_bridge_msgs::BlinkResult res;
-    srv.setSucceeded(res);
 }
 
 void SimulatedNao::OnFadeRgb(const naoqi_bridge_msgs::FadeRGBConstPtr &msg) {
@@ -20,7 +18,9 @@ namespace BridgeNaoLeds {
     void on_blink(
         const naoqi_bridge_msgs::BlinkGoalConstPtr &goal
     ) {
-        boost::get<SimulatedNao>(nao_connection).OnBlink(*act_srv_blink);
+        boost::get<SimulatedNao>(nao_connection).OnBlink();
+        naoqi_bridge_msgs::BlinkResult res;
+        act_srv_blink->setSucceeded(res);
     }
 
     void on_fade_rgb(
