@@ -1,16 +1,15 @@
 <?xml version="1.0"?>
 <launch>
 
-    <arg name="nao_ip" default="">
+    <arg name="nao_ip" default=""/>
 
     <!--Real Nao-->
-    <group if="$(eval arg('nao_ip') != "")">
+    <group if="$(eval arg('nao_ip') != '')">
         <include file="$(find nao_bringup)/launch/nao_full.launch"/>
     </group>
 
     <!--Simulated Robot-->
-    <group if="$(eval arg('nao_ip') == "")">
-        <arg name="network_interface" default=""> <!--Not needed but there for compatibility-->
+    <group if="$(eval arg('nao_ip') == '')">
         <include file="$(find nao_gazebo_plugin)/launch/nao_gazebo.launch" />
         <node name="fake_nao_apps" pkg="nao_auto_bridge" type="nao_auto_bridge_node" respawn="true" />
     </group>
