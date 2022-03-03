@@ -1,11 +1,44 @@
 <?xml version="1.0"?>
 <launch>
 
-    <arg name="nao_ip" default=""/>
+    
+    <arg name="nao_ip"          default="" />
+    <arg name="nao_port"        default="$(optenv NAO_PORT 9559)" />
+    <arg name="roscore_ip" default="127.0.0.1"/>
+    <arg name="network_interface" default="ens33"/>
 
     <!--Real Nao-->
-    <group if="$(eval arg('nao_ip') != '')">
-        <include file="$(find nao_bringup)/launch/nao_full.launch"/>
+    <group if="$(eval arg('nao_ip') != '')">  
+	<include file="$(find nao_apps)/launch/alife.launch" ns="nao_robot/alife">
+          <arg name="nao_ip"        value="$(arg nao_ip)" />
+        </include>
+
+       <include file="$(find nao_apps)/launch/behaviors.launch" ns="nao_robot/behaviors">
+          <arg name="nao_ip"        value="$(arg nao_ip)" />
+        </include>
+
+	<include file="$(find nao_apps)/launch/footsteps.launch" ns="nao_robot/footsteps">
+          <arg name="nao_ip"        value="$(arg nao_ip)" />
+        </include>
+
+	<include file="$(find nao_apps)/launch/leds.launch" ns="nao_robot/leds">
+          <arg name="nao_ip"        value="$(arg nao_ip)" />
+        </include>
+
+	<include file="$(find nao_apps)/launch/tactile.launch" ns="nao_robot/tactile">
+          <arg name="nao_ip"        value="$(arg nao_ip)" />
+        </include>
+
+	<include file="$(find nao_apps)/launch/walker.launch" ns="nao_robot/walker">
+          <arg name="nao_ip"        value="$(arg nao_ip)" />
+        </include>
+
+        <include file="$(find nao_bringup)/launch/nao_full.launch">
+          <arg name="nao_ip"            value="$(arg nao_ip)" />
+          <arg name="nao_port"          value="$(arg nao_port)" />
+          <arg name="roscore_ip"        value="$(arg roscore_ip)" />
+          <arg name="network_interface" value="$(arg network_interface)" />
+        </include>
     </group>
 
     <!--Simulated Robot-->
