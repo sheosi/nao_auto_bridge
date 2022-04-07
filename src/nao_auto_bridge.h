@@ -32,7 +32,7 @@ public:
     humanoid_nav_msgs::StepTarget OnClipFootstep(const humanoid_nav_msgs::StepTarget& in);
 
     // Leds methods
-    void OnBlink();
+    void OnBlink(const naoqi_bridge_msgs::BlinkGoalConstPtr &goal);
     void OnFadeRgb(const naoqi_bridge_msgs::FadeRGBConstPtr &msg);
 
     // Speech methods
